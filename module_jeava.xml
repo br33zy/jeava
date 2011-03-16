@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_jeava" default="compile.module.jeava">
+  <dirname property="module.jeava.basedir" file="${ant.file.module_jeava}"/>
+  
+  <property name="module.jdk.home.jeava" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.jeava" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.jeava" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.jeava" value="${compiler.args}"/>
+  
+  <property name="jeava.output.dir" value="${module.jeava.basedir}/out/production/jeava"/>
+  <property name="jeava.testoutput.dir" value="${module.jeava.basedir}/out/test/jeava"/>
+  
+  <path id="jeava.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="jeava.module.production.classpath">
+    <path refid="${module.jdk.classpath.jeava}"/>
+  </path>
+  
+  <path id="jeava.runtime.production.module.classpath">
+    <pathelement location="${jeava.output.dir}"/>
+  </path>
+  
+  <path id="jeava.module.classpath">
+    <path refid="${module.jdk.classpath.jeava}"/>
+    <pathelement location="${jeava.output.dir}"/>
+  </path>
+  
+  <path id="jeava.runtime.module.classpath">
+    <pathelement location="${jeava.testoutput.dir}"/>
+    <pathelement location="${jeava.output.dir}"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.jeava">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.jeava">
+    <patternset refid="excluded.from.module.jeava"/>
+  </patternset>
+  
+  <path id="jeava.module.sourcepath">
+    <dirset dir="${module.jeava.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.jeava" depends="compile.module.jeava.production,compile.module.jeava.tests" description="Compile module jeava"/>
+  
+  <target name="compile.module.jeava.production" depends="register.custom.compilers" description="Compile module jeava; production classes">
+    <mkdir dir="${jeava.output.dir}"/>
+    <javac2 destdir="${jeava.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.jeava}/javac">
+      <compilerarg line="${compiler.args.jeava}"/>
+      <bootclasspath refid="jeava.module.bootclasspath"/>
+      <classpath refid="jeava.module.production.classpath"/>
+      <src refid="jeava.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.jeava"/>
+    </javac2>
+    
+    <copy todir="${jeava.output.dir}">
+      <fileset dir="${module.jeava.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.jeava.tests" depends="register.custom.compilers,compile.module.jeava.production" description="compile module jeava; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.jeava" description="cleanup module">
+    <delete dir="${jeava.output.dir}"/>
+    <delete dir="${jeava.testoutput.dir}"/>
+  </target>
+</project>

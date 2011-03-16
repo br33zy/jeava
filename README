@@ -1,0 +1,6 @@
+Stumbling into some Java for Jeaves...
+
+To run:
+  cd out/production/jeava
+  java -cp . datedifferombulator.DateDifferOmbulatorApp 02 07 2010, 02 07 1900
+
